@@ -7,11 +7,17 @@ import urllib.parse
 import time
 import requests
 
+from interface import WebCrawlerInterface
+
 
 class AuditApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Audit Web")
+
+        self.crawler_gui = WebCrawlerInterface(root)
+
+        self.crawler_gui.btn_audit.config(command=self.start_audit)
 
         # Création des widgets
         self.label_url = ttk.Label(root, text="URL à auditer:")
@@ -28,6 +34,11 @@ class AuditApp:
     def start_audit(self):
         # Fonction à exécuter lors du clic sur le bouton "Lancer l'audit"
         url = self.entry_url.get()
+        url = self.crawler_gui.entry_url.get()
+        keywords = self.crawler_gui.keywords_entry.get().split(",")
+
+        self.crawler_gui.start_crawling(url, keywords)
+
         self.text_results.insert(tk.END, f"Auditing URL: {url}\n")
         self.audit_page(url)
 
@@ -122,6 +133,12 @@ class AuditApp:
         self.audit_keywords(html_content, ['mot_cle_1', 'mot_cle_2', 'mot_cle_3'])
         self.check_alt_tags(html_content)
         self.detect_copy_paste(html_content)
+
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Audit App")
+
+        self.crawler_gui = WebCrawlerInterface(root)
 
 
 if __name__ == "__main__":
