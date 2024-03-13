@@ -4,10 +4,12 @@ import threading
 import base64
 import urllib.parse
 
+
 # Fonction pour récupérer le contenu HTML d'une URL
 def get_html_content(url):
     response = requests.get(url)
     return response.content
+
 
 # Fonction pour extraire les balises <img> et <video> d'une page web
 def extract_media_tags(html_content):
@@ -15,6 +17,7 @@ def extract_media_tags(html_content):
     img_tags = soup.find_all('img')
     video_tags = soup.find_all('video')
     return img_tags, video_tags
+
 
 # Fonction pour obtenir la taille d'une image à partir de son URL ou de son contenu base64
 def get_image_size(image_src):
@@ -29,6 +32,7 @@ def get_image_size(image_src):
             print(f"Erreur lors de la récupération de la taille de l'image {image_src}: {e}")
             return None
 
+
 # Fonction pour obtenir la taille d'une image encodée en base64
 def get_base64_image_size(base64_data):
     try:
@@ -39,6 +43,7 @@ def get_base64_image_size(base64_data):
         print(f"Erreur lors de la récupération de la taille de l'image encodée en base64: {e}")
         return None
 
+
 # Fonction pour obtenir la taille d'une vidéo à partir de son URL
 def get_video_size(video_url):
     try:
@@ -48,6 +53,7 @@ def get_video_size(video_url):
         print(f"Erreur lors de la récupération de la taille de la vidéo {video_url}: {e}")
         return None
 
+
 # Fonction pour auditer les tailles des médias
 def audit_media_sizes(media_tags, media_type):
     for media_tag in media_tags:
@@ -55,6 +61,7 @@ def audit_media_sizes(media_tags, media_type):
         media_size = get_image_size(media_src) if media_type == 'image' else get_video_size(media_src)
         if media_size:
             print(f"{media_type.capitalize()}: {media_src}, Taille: {media_size} octets")
+
 
 # Fonction pour auditer la présence des balises <h1>
 def audit_h1_tags(html_content):
@@ -65,6 +72,7 @@ def audit_h1_tags(html_content):
     else:
         print("Attention : Aucune balise <h1> n'a été trouvée sur la page.")
 
+
 # Fonction pour auditer la présence des mots-clés
 def audit_keywords(html_content, mots_cles):
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -74,6 +82,7 @@ def audit_keywords(html_content, mots_cles):
             print(f"Le mot-clé '{mot_cle}' est présent sur la page.")
         else:
             print(f"Attention : Le mot-clé '{mot_cle}' n'a pas été trouvé sur la page.")
+
 
 # Fonction pour exécuter l'audit d'une page
 def audit_page(url):
@@ -90,6 +99,7 @@ def audit_page(url):
         thread = threading.Thread(target=audit_page, args=(link,))
         thread.start()
 
+
 # Fonction pour extraire les liens à partir du contenu HTML d'une page
 def extract_links(html_content, base_url):
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -99,6 +109,7 @@ def extract_links(html_content, base_url):
         absolute_link = urllib.parse.urljoin(base_url, link['href'])
         absolute_links.append(absolute_link)
     return absolute_links
+
 
 # URL de départ pour l'audit
 # start_url = 'https://blog.hubspot.fr/marketing'
