@@ -49,7 +49,8 @@ def page_url(url):
 
 
 links_intra = Queue()
-start_url = 'https://profolio.eu/'
+start_url = 'https://thenetworkforum.net/'
+# start_url = 'https://profolio.eu/'
 
 getLinkSite = LinkSite()
 getLinkSite.file_attente = links_intra

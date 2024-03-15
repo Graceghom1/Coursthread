@@ -37,14 +37,15 @@ class LinkSite(threading.Thread):
             try:
                 jpg_link = (link.get('href').find(".jpg") > -1)
                 png_link = (link.get('href').find(".png") > -1)
-                if link.get('href').startswith(url_base) and not jpg_link and not png_link and link.get(
+                pdf_link = (link.get('href').find(".pdf") > -1)
+                if link.get('href').startswith(url_base) and not jpg_link and not pdf_link and not png_link and link.get(
                         "href") not in self.links:
                     self.links.append(link.get('href'))
                     self.file_attente.put(link.get('href'))
                     self.extract_links(link.get('href'))
                 else:
                     if not link.get('href').startswith(url_base) and link.get('href').startswith(
-                            "http") and not jpg_link and not png_link and link.get("href") not in self.links_outgoing:
+                            "http") and not jpg_link and not pdf_link and not png_link and link.get("href") not in self.links_outgoing:
                         self.links_outgoing.append(link.get('href'))
                         # print("source url outgoing", link.get('href'))
 

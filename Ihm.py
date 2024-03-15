@@ -1,3 +1,4 @@
+import threading
 import tkinter as tk
 from tkinter import ttk
 from tkinter import scrolledtext
@@ -122,6 +123,20 @@ class AuditApp:
         self.audit_keywords(html_content, ['mot_cle_1', 'mot_cle_2', 'mot_cle_3'])
         self.check_alt_tags(html_content)
         self.detect_copy_paste(html_content)
+        links = extract_links(html_content, url)
+        for link in links:
+            thread = threading.Thread(target=self.audit_page, args=(link,))
+            thread.start()
+
+
+def extract_links(html_content, base_url):
+    soup = BeautifulSoup(html_content, 'html.parser')
+    links = soup.find_all('a', href=True)
+    absolute_links = []
+    for link in links:
+        absolute_link = urllib.parse.urljoin(base_url, link['href'])
+        absolute_links.append(absolute_link)
+    return absolute_links
 
 
 if __name__ == "__main__":
