@@ -97,8 +97,5 @@ class WebCrawlerInterface:
 
         return unique_links
 
-    # if __name__ == "__main__":
-    #     root = tk.Tk()
-    #     app = AuditApp(root)
-    #     root.mainloop()
+
 
