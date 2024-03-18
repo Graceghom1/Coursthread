@@ -1,8 +1,9 @@
+import threading
 import tkinter as tk
 from tkinter import ttk
 from queue import Queue
-from threading import Thread
 from codeC.functiondirectory.display_threads import DisplayThreads
+from ref.page import Page
 
 
 class AuditApp(tk.Tk):
@@ -29,15 +30,19 @@ class AuditApp(tk.Tk):
 
         # Création d'une file d'attente pour stocker les résultats des threads
         self.queue = Queue()
+        self.list_pages = [Page()]
+
 
     def start_audit(self):
         url = self.url_entry.get()
         if url:
             # Lancer un thread pour afficher les informations extraites
             self.clear_results()
-            display_thread = DisplayThreads(url, self)
+            display_thread = DisplayThreads(url=url, pages=self.list_pages, queue=self.queue, ihm=self)
             display_thread.start()
-            self.after(100, self.update_result_tree)  # Mettre à jour le Treeview périodiquement
+            # self.after(1000, self.update_result_tree)  # Mettre à jour le Treeview périodiquement
+            self.lancer_th_maj()
+
 
     def clear_results(self):
         # Effacer les résultats précédents du Treeview
@@ -45,18 +50,27 @@ class AuditApp(tk.Tk):
             self.result_tree.delete(item)
 
     def update_result_tree(self):
+        print("JE suis Exterier ")
         # Afficher les résultats dans le Treeview
-        while not self.queue.empty():
+        while True: # while not self.queue.empty():
+            print("JE suis la interieure ")
             result = self.queue.get()
-            for idx, item in enumerate(result, start=1):
-                self.result_tree.insert("", "end", text=str(idx), values=item)
+            print("Je suis interface ///-------",result.url)
+            self.result_tree.insert("", "end", text=str(1), values=[result.url, result.load_time, result.h1])
+            # for idx, item in enumerate(result, start=1):
+            #     self.result_tree.insert("", "end", text=str(idx), values=item)
 
         # Rappeler cette méthode périodiquement
-        self.after(100, self.update_result_tree)
+        # self.after(1000, self.update_result_tree)
 
     def display_results(self, results):
         # Mettre les résultats dans la file d'attente pour affichage
         self.queue.put(results)
+
+    def lancer_th_maj(self):
+        print("JE suis la ")
+        th = threading.Thread(target=self.update_result_tree)
+        th.start()
 
 
 if __name__ == "__main__":

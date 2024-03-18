@@ -11,11 +11,12 @@ class ConsumerLinks(threading.Thread):
     queue = Queue()
     queue_ihm = Queue()
 
-    def __init__(self, queue, lock, queue_ihm):
+    def __init__(self, queue, lock, queue_ihm, imh):
         super().__init__()
         self.queue = queue
         self.pages_list = lock
         self.queue_ihm = queue_ihm
+        self.gui_ihm = imh
 
     def run(self):
         self.consume()
@@ -28,12 +29,12 @@ class ConsumerLinks(threading.Thread):
                 print("--------****** : ", item)
                 break
             self.url = item
-            p = DisplayCalcThread(item, self.pages_list, self.queue_ihm)
+            p = DisplayCalcThread(item, self.pages_list, self.queue_ihm, self.gui_ihm)
             p.start_thread()
             self.thread_calc_page.append(p)
 
     def start_thread(self):
-        th = ConsumerLinks(queue=self.queue, lock=self.pages_list,  queue_ihm=self.queue_ihm)
+        th = ConsumerLinks(queue=self.queue, lock=self.pages_list, queue_ihm=self.queue_ihm, imh=self.gui_ihm)
         th.start()
         return th
 

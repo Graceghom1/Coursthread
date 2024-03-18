@@ -13,15 +13,17 @@ class DisplayCalcThread(threading.Thread):
     pages = [Page()]
     file_queue = queue.Queue()
 
-    def __init__(self, url, lock, f_queue):
+    def __init__(self, url, lock, f_queue, ihm):
         super().__init__()
         self.url = url
         self.pages = lock
         self.file_queue = f_queue
+        self.ihm = ihm
 
     def run(self):
         p = self.start_treatment_page()
         self.pages.append(p)
+        self.ihm.display_results(p)
         # self.file_queue.put(p)
 
     def start_treatment_page(self):
@@ -38,9 +40,10 @@ class DisplayCalcThread(threading.Thread):
         th_load_time.join()
         th_tag_h1.join()
         self.file_queue.put(p)
+
         return p
 
     def start_thread(self):
-        th = DisplayCalcThread(self.url, self.pages, self.file_queue)
+        th = DisplayCalcThread(self.url, self.pages, self.file_queue, self.ihm)
         th.start()
         return th
