@@ -9,6 +9,7 @@ from codeC.functiondirectory.audit_h1_tag import AuditH1Tag
 from codeC.functiondirectory.audit_image_weight import AuditImageWeight
 from codeC.functiondirectory.audit_video import AuditVideoSize
 from codeC.functiondirectory.audit_word_frequency import AuditWordFrequency
+from codeC.functiondirectory.audit_word_pertinence import AuditWordPertinence
 from codeC.functiondirectory.loadTime import LoadTimeAndContent
 from ref.page import Page
 
@@ -58,6 +59,10 @@ class DisplayCalcThread(threading.Thread):
         audit_alt = AuditAltTags(html_content, p)
         th_alt = audit_alt.start_thread()
 
+        # Start the word pertinence audit
+        audit_word_pertinence = AuditWordPertinence(html_content, p)
+        th_word_pertinence = audit_word_pertinence.start_thread()
+
         # Wait for all threads to complete
         th_load_time.join()
         th_tag_h1.join()
@@ -65,7 +70,8 @@ class DisplayCalcThread(threading.Thread):
         th_videos.join()
         th_words.join()
         th_alt.join()
-
+        th_word_pertinence.join()
+        
         # Put the page into the queue for later use
         self.file_queue.put(p)
 
