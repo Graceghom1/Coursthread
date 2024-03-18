@@ -9,26 +9,39 @@ class DisplayThreads(threading.Thread):
     urlD = ''
     th_children = []
 
-    def __init__(self, url):
+    def __init__(self, url, gui):
         super().__init__()
-        self.urlD = url
+        self.url = url
+        self.gui = gui
+        self.results = []
 
     def run(self):
         self.declaration()
 
     def declaration(self):
-        file_attente = Queue()
-        producteur = ProductLinks(url=self.urlD, queue=file_attente)
-        th_p = producteur.start_thread()
-        consommateur = ConsumerLinks(queue=file_attente)
-        th_c = consommateur.start_thread()
-        for th in th_c.get_th_children():
-            th.join()
+        file_queue = Queue()
+        producer = ProductLinks(url=self.url, queue=file_queue)
+        producer_thread = producer.start_thread()
 
-        th_p.join()
-        th_c.join()
+        consumer = ConsumerLinks(queue=file_queue)
+        consumer_thread = consumer.start_thread()
+
+        for thread in consumer.get_th_children():
+            thread.join()
+            self.results.append(thread.get_result())
+
+        producer_thread.join()
+        consumer_thread.join()
+
+        # Afficher les résultats dans l'interface graphique
+        self.gui.display_results(self.results)
+
+    # def start_thread(self):
+    #     th = DisplayThreads()
+    #     th.start()
+    #     th.join()
 
     def start_thread(self):
-        th = DisplayThreads(self.urlD)
+        th = DisplayThreads(self.urlD, self.gui)
         th.start()
         th.join()
