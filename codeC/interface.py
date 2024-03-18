@@ -32,16 +32,12 @@ class AuditApp(tk.Tk):
         self.queue = Queue()
         self.list_pages = [Page()]
 
-
     def start_audit(self):
         url = self.url_entry.get()
         if url:
-            # Lancer un thread pour afficher les informations extraites
             self.clear_results()
             display_thread = DisplayThreads(url=url, pages=self.list_pages, queue=self.queue, ihm=self)
             display_thread.start()
-            # self.after(1000, self.update_result_tree)  # Mettre à jour le Treeview périodiquement
-            self.lancer_th_maj()
 
 
     def clear_results(self):
@@ -52,10 +48,10 @@ class AuditApp(tk.Tk):
     def update_result_tree(self):
         print("JE suis Exterier ")
         # Afficher les résultats dans le Treeview
-        while True: # while not self.queue.empty():
+        while True:  # while not self.queue.empty():
             print("JE suis la interieure ")
             result = self.queue.get()
-            print("Je suis interface ///-------",result.url)
+            print("Je suis interface ///-------", result.url)
             self.result_tree.insert("", "end", text=str(1), values=[result.url, result.load_time, result.h1])
             # for idx, item in enumerate(result, start=1):
             #     self.result_tree.insert("", "end", text=str(idx), values=item)
@@ -71,6 +67,9 @@ class AuditApp(tk.Tk):
         print("JE suis la ")
         th = threading.Thread(target=self.update_result_tree)
         th.start()
+
+    def update_ihm(self, result):
+        self.result_tree.insert("", "end", text=str(1), values=[result.url, result.load_time, result.h1])
 
 
 if __name__ == "__main__":

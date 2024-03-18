@@ -22,9 +22,7 @@ class DisplayCalcThread(threading.Thread):
 
     def run(self):
         p = self.start_treatment_page()
-        self.pages.append(p)
-        self.ihm.display_results(p)
-        # self.file_queue.put(p)
+        self.ihm.update_ihm(p)
 
     def start_treatment_page(self):
         p = Page()
