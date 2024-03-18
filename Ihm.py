@@ -8,7 +8,7 @@ import urllib.parse
 import time
 import requests
 
-from interface import WebCrawlerInterface
+from codeC.interface import WebCrawlerInterface
 
 
 class AuditApp:
