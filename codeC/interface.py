@@ -23,7 +23,8 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
         # so we'll keep using the ttk.Treeview for now.
         # If you need a matching style, you may need to customize ttk.Treeview or use a different approach.
         self.result_tree = ttk.Treeview(self, columns=(
-            "Page", "Temps de chargement", "Présence H1", "Poids des images", "Taille des vidéos", "Top mots"))
+            "Page", "Temps de chargement", "Présence H1", "Poids des images", "Taille des vidéos", "Top mots",
+            "Alt Tags"))
 
         self.result_tree.heading("Page", text="Page")
         self.result_tree.heading("Temps de chargement", text="Temps de chargement")
@@ -31,6 +32,7 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
         self.result_tree.heading("Poids des images", text="Poids des images (KB)")  # New column for image weights
         self.result_tree.heading("Taille des vidéos", text="Taille des vidéos (KB)")
         self.result_tree.heading("Top mots", text="Top mots (fréquence)")
+        self.result_tree.heading("Alt Tags", text="Alt Tags")
         self.result_tree.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky='nsew')
 
         # Allow the second row (index 2, where your Treeview is placed) to expand
@@ -78,15 +80,16 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
         th.start()
 
     def update_ihm(self, result):
+        alt_tags_info = f"{result.images_with_alt}"
         self.result_tree.insert("", "end", text=str(1), values=[
             result.url,
             result.load_time,
             result.h1,
             round(result.image_weight, 2) if result.image_weight else 0,
             round(result.video_size, 2) if result.video_size else 0,
-            result.top_words  # Add the word frequencies string here
+            result.top_words,
+            alt_tags_info  # Add the alt tags count here
         ])
-
 
 if __name__ == "__main__":
     app = AuditApp()
