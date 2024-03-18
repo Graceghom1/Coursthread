@@ -6,6 +6,8 @@ import requests
 
 from codeC.functiondirectory.audit_h1_tag import AuditH1Tag
 from codeC.functiondirectory.audit_image_weight import AuditImageWeight
+from codeC.functiondirectory.audit_video import AuditVideoSize
+from codeC.functiondirectory.audit_word_frequency import AuditWordFrequency
 from codeC.functiondirectory.loadTime import LoadTimeAndContent
 from ref.page import Page
 
@@ -43,10 +45,20 @@ class DisplayCalcThread(threading.Thread):
         audit_images = AuditImageWeight(html_content, p)
         th_images = audit_images.start_thread()
 
+        # New video size audit
+        audit_videos = AuditVideoSize(html_content, p)
+        th_videos = audit_videos.start_thread()
+
+        # Existing audits
+        audit_words = AuditWordFrequency(html_content, p)
+        th_words = audit_words.start_thread()
+
         # Wait for all threads to complete
         th_load_time.join()
         th_tag_h1.join()
         th_images.join()
+        th_videos.join()
+        th_words.join()
 
         # Put the page into the queue for later use
         self.file_queue.put(p)
