@@ -1,20 +1,23 @@
+import queue
 import threading
 import tkinter
 from queue import Queue
 
 from codeC.functiondirectory.display_threads import DisplayThreads
+from ref.page import Page
 
 main_url = 'https://www.facebook.com/'
 
 # main_url = 'https://profolio.eu/fr/'
 
-lock = threading.Lock()
+lock = [Page]
+qq = queue.Queue()
 
 
 def lancer():
     url = url_name_entry.get()
     if url:
-        disp = DisplayThreads(url, lock)
+        disp = DisplayThreads(url, lock, queue=qq)
         th = disp.start_thread()
         th.join()
 

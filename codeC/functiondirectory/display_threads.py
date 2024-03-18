@@ -3,26 +3,31 @@ from queue import Queue
 
 from codeC.functiondirectory.consumerLinks import ConsumerLinks
 from codeC.functiondirectory.productLinks import ProductLinks
+from ref.page import Page
 
 
 class DisplayThreads(threading.Thread):
     urlD = ''
     th_children = []
-    lock = threading.Lock()
+    list_pages = [Page()]
+    queue = Queue()
 
-    def __init__(self, url, lock):
+    def __init__(self, url, pages, queue):
         super().__init__()
         self.urlD = url
-        self.lock = lock
+        self.list_pages = pages
+        self.queue = queue
 
     def run(self):
         self.declaration()
+        for l in self.list_pages:
+            print("----------riadh : ***", l.url)
 
     def declaration(self):
         file_attente = Queue()
         p = ProductLinks(url=self.urlD, queue=file_attente)
         th_p = p.start_thread()
-        c = ConsumerLinks(queue=file_attente, lock=self.lock)
+        c = ConsumerLinks(queue=file_attente, lock=self.list_pages, queue_ihm=self.queue)
         th_c = c.start_thread()
         for th in th_c.get_th_children():
             print(th)
@@ -32,6 +37,6 @@ class DisplayThreads(threading.Thread):
         th_c.join()
 
     def start_thread(self):
-        th = DisplayThreads(self.urlD, self.lock)
+        th = DisplayThreads(self.urlD, self.list_pages, self.queue)
         th.start()
         return th

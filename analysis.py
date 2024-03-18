@@ -14,6 +14,7 @@ def get_html_content(url):
     except Exception as e:
         return "", 0, str(e)  # Return empty content, zero time, and the error message
 
+
 def calculate_word_frequencies(text):
     try:
         words = text.lower().split()
