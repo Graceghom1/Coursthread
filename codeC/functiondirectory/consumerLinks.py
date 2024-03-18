@@ -1,4 +1,4 @@
-import queue
+from queue import Queue
 import threading
 from codeC.functiondirectory.display_calc_threads import DisplayCalcThread
 
@@ -6,13 +6,13 @@ from codeC.functiondirectory.display_calc_threads import DisplayCalcThread
 class ConsumerLinks(threading.Thread):
     url = ''
     thread_calc_page = []
+    lock = threading.Lock()
+    queue = Queue()
 
-    def __init__(self, queue=None):
+    def __init__(self, queue, lock):
         super().__init__()
-        if queue is None:
-            pass
-        else:
-            self.queue = queue
+        self.queue = queue
+        self.lock = lock
 
     def run(self):
         self.consume()
@@ -25,12 +25,13 @@ class ConsumerLinks(threading.Thread):
                 print("--------****** : ", item)
                 break
             self.url = item
-            p = DisplayCalcThread(item)
+            # self.lock.acquire()
+            p = DisplayCalcThread(item, self.lock)
             p.start_thread()
             self.thread_calc_page.append(p)
 
     def start_thread(self):
-        th = ConsumerLinks(queue=self.queue)
+        th = ConsumerLinks(queue=self.queue, lock=self.lock)
         th.start()
         return th
 

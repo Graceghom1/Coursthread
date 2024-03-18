@@ -16,7 +16,7 @@ class LoadTimeAndContent(threading.Thread):
         start_time = time.time()
         self.html_content = requests.get(self.url).content
         end_time = time.time()
-        self.load_time = end_time - start_time
+        self.load_time = round(end_time - start_time, 3)
         return self.load_time, self.html_content
 
     def run(self):

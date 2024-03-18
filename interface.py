@@ -1,11 +1,11 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
 import threading
 import time
+from tkinter import messagebox
+from tkinter import ttk
+from urllib.parse import urljoin
+
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 
 
 class WebCrawlerInterface:

@@ -16,7 +16,7 @@ class AuditH1Tag(threading.Thread):
         return len(h1_tags)
 
     def run(self):
-        self.h1= self.audit_h1_tags()
+        self.h1 = self.audit_h1_tags()
         print("audit h1 : ", self.h1)
 
     def start_thread(self):
