@@ -5,6 +5,7 @@ from queue import Queue
 import requests
 
 from codeC.functiondirectory.audit_h1_tag import AuditH1Tag
+from codeC.functiondirectory.audit_image_weight import AuditImageWeight
 from codeC.functiondirectory.loadTime import LoadTimeAndContent
 from ref.page import Page
 
@@ -28,15 +29,26 @@ class DisplayCalcThread(threading.Thread):
         p = Page()
         print(self.url)
         p.url = self.url
-        __html = requests.get(self.url).content
-        l = LoadTimeAndContent(self.url, p)
-        th_load_time = l.start_thread()
-        load_time, html_content = l.get_load_time_and_content()
+        html_content = requests.get(self.url).content
 
-        tag_h1 = AuditH1Tag(__html, p)
-        th_tag_h1 = tag_h1.start_thread()
+        # Load time and content
+        load_time_and_content = LoadTimeAndContent(self.url, p)
+        th_load_time = load_time_and_content.start_thread()
+
+        # H1 tag audit
+        audit_h1 = AuditH1Tag(html_content, p)
+        th_tag_h1 = audit_h1.start_thread()
+
+        # Image weight audit
+        audit_images = AuditImageWeight(html_content, p)
+        th_images = audit_images.start_thread()
+
+        # Wait for all threads to complete
         th_load_time.join()
         th_tag_h1.join()
+        th_images.join()
+
+        # Put the page into the queue for later use
         self.file_queue.put(p)
 
         return p
