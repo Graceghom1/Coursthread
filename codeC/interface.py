@@ -1,9 +1,11 @@
 import threading
-from tkinter import ttk
+from tkinter import ttk, filedialog, messagebox
 
 import customtkinter as ctk  # Import customtkinter instead of tkinter
 from queue import Queue
 from codeC.functiondirectory.display_threads import DisplayThreads
+from codeC.functiondirectory.generate_pdf import PDF_Generator
+from codeC.functiondirectory.pdf import PDF_Generator2
 from ref.page import Page
 
 
@@ -17,11 +19,8 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
         self.url_entry = ctk.CTkEntry(self,
                                       width=400)  # Use CTkEntry, note that the width is different in customtkinter
         self.start_button = ctk.CTkButton(self, text="Lancer l'audit", command=self.start_audit)  # Use CTkButton
+        self.pdf_button = ctk.CTkButton(self, text="PDF", command=self.generate_pdf)  # Use CTkButton
 
-        # Creating the Treeview for displaying results
-        # Note: customtkinter doesn't provide a direct replacement for Treeview,
-        # so we'll keep using the ttk.Treeview for now.
-        # If you need a matching style, you may need to customize ttk.Treeview or use a different approach.
         self.result_tree = ttk.Treeview(self, columns=(
             "Page", "Temps de chargement", "Présence H1", "Poids des images", "Taille des vidéos", "Top mots",
             "Alt Tags",
@@ -49,23 +48,35 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
         self.url_label.grid(row=0, column=0, padx=5, pady=5, sticky='e')
         self.url_entry.grid(row=0, column=1, padx=5, pady=5, sticky='w')
         self.start_button.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+        self.pdf_button.grid(row=1, column=1, columnspan=2, padx=5, pady=5)
         self.result_tree.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
 
         # Creating a queue to store results from threads
         self.queue = Queue()
         self.list_pages = [Page()]
+        self.page_audit_results = []
+        self.th = threading.Thread
+
+    def generate_pdf(self):
+        PDF_Generator2.generate_pdf(self.page_audit_results)
 
     def start_audit(self):
         url = self.url_entry.get()
+        self.page_audit_results.clear()
         if url:
+            # self.start_button.configure(state='disabled')
             self.clear_results()
             display_thread = DisplayThreads(url=url, pages=self.list_pages, queue=self.queue, ihm=self)
-            display_thread.start()
+            self.th = display_thread.start_thread()
 
     def clear_results(self):
         # Clear previous results from the Treeview
         for item in self.result_tree.get_children():
             self.result_tree.delete(item)
+
+    def get_results(self):
+        for page in self.list_pages:
+            print(page.url)
 
     def update_result_tree(self):
         # Display results in the Treeview
@@ -79,12 +90,13 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
         self.queue.put(results)
 
     def lancer_th_maj(self):
+        self.page_audit_results = []
         th = threading.Thread(target=self.update_result_tree)
         th.start()
 
     def update_ihm(self, result):
         alt_tags_info = f"{result.images_with_alt}"
-        self.result_tree.insert("", "end", text=str(1), values=[
+        values = [
             result.url,
             result.load_time,
             result.h1,
@@ -93,7 +105,20 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
             result.top_words,
             alt_tags_info,
             result.top_keywords  # Insert the top words and their frequencies
-        ])
+        ]
+
+        val = {
+            "Page" : result.url,
+            'Temps de chargement' : result.load_time,
+            'Présence H1' : result.h1,
+        'Poids des images (KB)' : round(result.image_weight, 2) if result.image_weight else 0,
+            'Taille des vidéos (KB)' : round(result.video_size, 2) if result.video_size else 0,
+        'Top mots (fréquence)' : result.top_words,
+        "Alt Tags" : alt_tags_info,
+        "Top mots (pertinence)": result.top_keywords  # Insert the top words and their frequencies
+        }
+        self.page_audit_results.append(val)
+        self.result_tree.insert("", "end", text=str(1), values=values)
 
 
 if __name__ == "__main__":

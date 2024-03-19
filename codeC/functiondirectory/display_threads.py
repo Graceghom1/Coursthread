@@ -21,8 +21,6 @@ class DisplayThreads(threading.Thread):
 
     def run(self):
         self.declaration()
-        for l in self.list_pages:
-            print("----------riadh : ***", l.url)
 
     def declaration(self):
         file_attente = Queue()
@@ -38,6 +36,6 @@ class DisplayThreads(threading.Thread):
         th_c.join()
 
     def start_thread(self):
-        th = DisplayThreads(self.urlD, self.list_pages, self.queue)
+        th = DisplayThreads(self.urlD, self.list_pages, self.queue, ihm=self.ihm)
         th.start()
         return th

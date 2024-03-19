@@ -59,6 +59,8 @@ class ProductLinks(threading.Thread):
                     visited.add(current_url)
                     for link in links:
                         queue.append((link, depth + 1))
+                else :
+                    self.links_outgoing.append(current_url)
             except Exception as e:
                 print('', e)
 
