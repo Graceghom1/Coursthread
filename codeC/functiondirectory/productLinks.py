@@ -20,7 +20,7 @@ class ProductLinks(threading.Thread):
 
     def run(self):
         # self.extract_links(self.url)
-        self.get_links(self.url, 3)
+        self.get_links(self.url, 1)
         self.file_queue.put("END_LINKS")
 
     def start_thread(self):
