@@ -2,6 +2,7 @@ import threading
 from bs4 import BeautifulSoup
 from ref.page import Page
 
+
 class AuditAltTags(threading.Thread):
     def __init__(self, html_content, page):
         super().__init__()
