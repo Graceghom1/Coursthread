@@ -4,6 +4,7 @@ from queue import Queue
 
 import requests
 
+from codeC.functiondirectory.alt_images import AltImages
 from codeC.functiondirectory.audit_h1_tag import AuditH1Tag
 from codeC.functiondirectory.loadTime import LoadTimeAndContent
 from ref.page import Page
@@ -35,8 +36,13 @@ class DisplayCalcThread(threading.Thread):
 
         tag_h1 = AuditH1Tag(__html, p)
         th_tag_h1 = tag_h1.start_thread()
+
+        alt_th = AltImages(html_content=__html, p=p)
+        th_alt = alt_th.start_thread()
+
         th_load_time.join()
         th_tag_h1.join()
+        th_alt.join()
         self.file_queue.put(p)
 
         return p

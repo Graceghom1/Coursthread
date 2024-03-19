@@ -20,7 +20,7 @@ class ProductLinks(threading.Thread):
 
     def run(self):
         # self.extract_links(self.url)
-        self.get_links(self.url, 1)
+        self.get_links(self.url, 3)
         self.file_queue.put("END_LINKS")
 
     def start_thread(self):
@@ -54,7 +54,7 @@ class ProductLinks(threading.Thread):
                     response.raise_for_status()
                     soup = BeautifulSoup(response.content, 'html.parser')
                     links = [link.get('href') for link in soup.find_all('a', href=True)]
-                    # print("Links on", current_url)
+                    # print("Links on", .)
                     self.file_queue.put(current_url)
                     visited.add(current_url)
                     for link in links:

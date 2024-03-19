@@ -17,10 +17,11 @@ class AuditApp(tk.Tk):
         self.start_button = ttk.Button(self, text="Lancer l'audit", command=self.start_audit)
 
         # Création du Treeview pour afficher les résultats
-        self.result_tree = ttk.Treeview(self, columns=("Page", "Temps de chargement", "Présence H1"))
+        self.result_tree = ttk.Treeview(self, columns=("Page", "Temps de chargement", "Présence H1", "Taile img"))
         self.result_tree.heading("Page", text="Page")
         self.result_tree.heading("Temps de chargement", text="Temps de chargement")
         self.result_tree.heading("Présence H1", text="Présence H1")
+        self.result_tree.heading("Taile img", text="Présence Alt")
 
         # Positionnement des widgets dans la grille
         self.url_label.grid(row=0, column=0, padx=5, pady=5, sticky=tk.E)
@@ -52,7 +53,7 @@ class AuditApp(tk.Tk):
             print("JE suis la interieure ")
             result = self.queue.get()
             print("Je suis interface ///-------", result.url)
-            self.result_tree.insert("", "end", text=str(1), values=[result.url, result.load_time, result.h1])
+            self.result_tree.insert("", "end", text=str(1), values=[result.url, result.load_time, result.h1, result.img_tags])
             # for idx, item in enumerate(result, start=1):
             #     self.result_tree.insert("", "end", text=str(idx), values=item)
 
@@ -64,12 +65,11 @@ class AuditApp(tk.Tk):
         self.queue.put(results)
 
     def lancer_th_maj(self):
-        print("JE suis la ")
         th = threading.Thread(target=self.update_result_tree)
         th.start()
 
     def update_ihm(self, result):
-        self.result_tree.insert("", "end", text=str(1), values=[result.url, result.load_time, result.h1])
+        self.result_tree.insert("", "end", text=str(), values=[result.url, result.load_time, result.h1, result.img_tags])
 
 
 if __name__ == "__main__":
