@@ -4,7 +4,6 @@ from tkinter import ttk, filedialog, messagebox
 import customtkinter as ctk  # Import customtkinter instead of tkinter
 from queue import Queue
 from codeC.functiondirectory.display_threads import DisplayThreads
-from codeC.functiondirectory.generate_pdf import PDF_Generator
 from codeC.functiondirectory.pdf import PDF_Generator2
 from ref.page import Page
 
