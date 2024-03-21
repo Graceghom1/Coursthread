@@ -94,12 +94,34 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
         th.start()
 
     def update_ihm(self, result):
+        # Create tags for different weight categories
+        self.result_tree.tag_configure('high_weight',
+                                       background='pink')  # Change 'pink' to any color you prefer for high weights
+        self.result_tree.tag_configure('low_weight',
+                                       background='lightgreen')  # Change 'lightgreen' to any color you prefer for low weights
+
+        # Determine the display for the image weight based on its value and set the tag
+        if result.image_weight:  # Check if there is an image weight value
+            if result.image_weight > 100:
+                image_weight_display = f"{round(result.image_weight, 2)} KB"
+                weight_tag = 'high_weight'
+            else:
+                image_weight_display = f"{round(result.image_weight, 2)} KB"
+                weight_tag = 'low_weight'
+        else:
+            # If there's no value, set to 'Unknown' and use default color
+            image_weight_display = "Unknown"
+            weight_tag = ''  # No tag applies default styling
+
+        # Prepare the alt tags info
         alt_tags_info = f"{result.images_with_alt}"
+
+        # Insert the row into the Treeview with the specified tag for color coding
         values = [
             result.url,
             result.load_time,
             result.h1,
-            round(result.image_weight, 2) if result.image_weight else 0,
+            image_weight_display,  # Display for image weight
             round(result.video_size, 2) if result.video_size else 0,
             result.top_words,
             alt_tags_info,
@@ -117,7 +139,7 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
         "Top mots (pertinence)": result.top_keywords  # Insert the top words and their frequencies
         }
         self.page_audit_results.append(val)
-        self.result_tree.insert("", "end", text=str(1), values=values)
+        self.result_tree.insert("", "end", text=str(1), values=values, tags=(weight_tag,))
 
 
 if __name__ == "__main__":
