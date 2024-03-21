@@ -129,14 +129,14 @@ class AuditApp(ctk.CTk):  # Inherit from CTk instead of tk.Tk
         ]
 
         val = {
-            "Page" : result.url,
-            'Temps de chargement' : result.load_time,
-            'Présence H1' : result.h1,
-        'Poids des images (KB)' : round(result.image_weight, 2) if result.image_weight else 0,
-            'Taille des vidéos (KB)' : round(result.video_size, 2) if result.video_size else 0,
-        'Top mots (fréquence)' : result.top_words,
-        "Alt Tags" : alt_tags_info,
-        "Top mots (pertinence)": result.top_keywords  # Insert the top words and their frequencies
+            "Page": result.url,
+            'Temps de chargement': result.load_time,
+            'Présence H1': result.h1,
+            'Poids des images (KB)': round(result.image_weight, 2) if result.image_weight else 0,
+            'Taille des vidéos (KB)': round(result.video_size, 2) if result.video_size else 0,
+            'Top mots (fréquence)': result.top_words,
+            "Alt Tags": alt_tags_info,
+            "Top mots (pertinence)": result.top_keywords  # Insert the top words and their frequencies
         }
         self.page_audit_results.append(val)
         self.result_tree.insert("", "end", text=str(1), values=values, tags=(weight_tag,))
